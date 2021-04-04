@@ -8,11 +8,20 @@ from PIL import Image
 import base64
 import numpy as np
 import requests
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 app = Flask(__name__)
 
 client = pymongo.MongoClient("mongodb+srv://csai-editor:csaieditor@argocluster.lyc0j.mongodb.net/argo_editor?retryWrites=true&w=majority")
 db = client.argo_editor
 col = db["argoTour"]
+
+cloudinary.config( 
+  cloud_name = "csai", 
+  api_key = "873262435531842",
+  api_secret = "CCMU1kd4H25oia151RnemiqvKHk"
+)
 
 @app.route("/tour", methods=["GET"])
 def getTours():
@@ -66,6 +75,28 @@ def findDepth():
     #im.save("yourfile.png")
     
     return {"data": im_array.tolist()}
+
+
+@app.route("/uploadimage", methods=["POST"])
+def uploadImage():
+    """
+    Upload Image to Cloudinary
+    """
+    
+    if("image" in request.files):
+        image = request.files["image"]
+    else:
+        print("error")
+
+    d = cloudinary.uploader.upload(image, 
+    folder = "", 
+    public_id = image.filename,
+    overwrite = True, 
+    resource_type = "image")
+
+    return d['secure_url']
+
+
 
 if __name__ == "__main__":
     app.run()
