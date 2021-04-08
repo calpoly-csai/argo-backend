@@ -1,7 +1,5 @@
 import numpy as np
-from six import b
 import tensorflow as tf
-import tensorflow_hub as hub
 import urllib
 import base64
 from io import BytesIO
@@ -10,24 +8,24 @@ import PIL
 import os
 
 source_url = "https://github.com/intel-isl/MiDaS/releases/download/v2_1/model_opt.tflite"
-model_filename = "depth_perception.tflite"
 
-if not "depth_perception.tflite" in os.listdir('.'):
+model_filename = os.path.join("src", "models", "depth_perception.tflite")
+print(os.listdir("."))
+
+if not "depth_perception.tflite" in os.listdir(os.path.join("src", "models")):
     urllib.request.urlretrieve(source_url, model_filename)
 
 
 def midas_find_depth(b64_image:str) -> str:
-    #header = b64_image.split(",")[0] + ","
     image = decode_image(b64_image)
     result = predict_depth(image)
-    return result#.tolist()
+    return result
 
 
 def decode_image(uri: str) -> np.array:
     """
     Translates image from base64 string to numpy array.
     """
-    #data = uri.split(",")[1]
     data = uri
     data = BytesIO(base64.b64decode(data))
     image = Image.open(data).convert("RGB")
