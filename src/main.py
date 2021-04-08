@@ -8,11 +8,27 @@ import requests
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from flask_cors import CORS
+import mongomock
+import argparse
+import os
+import json
 app = Flask(__name__)
+CORS(app)
 
-client = pymongo.MongoClient("mongodb+srv://csai-editor:csaieditor@argocluster.lyc0j.mongodb.net/argo_editor?retryWrites=true&w=majority")
+parser = argparse.ArgumentParser(description='Argo Backend Server')
+parser.add_argument('-l', "--l", "-local", dest='local', action='store_const', const=True, default=False, help='Indicates if the program should run in development mode')
+args = parser.parse_args()
+use_local_dev = args.local
+mock_server_url = "mongomock://localhost"
+production_server_url = "mongodb+srv://csai-editor:csaieditor@argocluster.lyc0j.mongodb.net/argo_editor?retryWrites=true&w=majority"
+client = mongomock.MongoClient() if use_local_dev else pymongo.MongoClient(production_server_url)
 db = client.argo_editor
 col = db["argoTour"]
+if use_local_dev:
+    with open(os.path.join("src", "assets", "example-tour.json")) as f:
+        example_tour = json.load(f)
+        col.insert_one(example_tour)
 
 cloudinary.config( 
   cloud_name = "csai", 
@@ -39,17 +55,19 @@ def updateTour():
     """
     tourinfo = request.get_json()
     print(tourinfo)
+
     if "_id" in tourinfo:
         query_tour = {"_id": ObjectId(tourinfo["_id"])}
         doc = col.find_one(query_tour)
         
         if doc == None:
             print("This Tour Doesn't Exist")
-            return
+            return "This Tour Doesn't Exist", 404
         else:
-            # TODO: Replace Nodes Here
             print("I found the tour!")
-            pass
+            del tourinfo["_id"]
+            col.replace_one(query_tour, tourinfo)
+            return "Tour Updated", 200
     
     else:
         _id = col.insert_one(tourinfo)
@@ -61,6 +79,7 @@ def findDepth():
     """
     Get Image URL and return depth map
     """
+    # TODO update this to fetch from cloudinary directly.
     image_url = request.get_data()
 
     encoded_string = base64.b64encode(requests.get(image_url).content)

@@ -10,7 +10,6 @@ import os
 source_url = "https://github.com/intel-isl/MiDaS/releases/download/v2_1/model_opt.tflite"
 
 model_filename = os.path.join("src", "models", "depth_perception.tflite")
-print(os.listdir("."))
 
 if not "depth_perception.tflite" in os.listdir(os.path.join("src", "models")):
     urllib.request.urlretrieve(source_url, model_filename)
