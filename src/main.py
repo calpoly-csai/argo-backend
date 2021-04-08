@@ -3,10 +3,7 @@ from bson.objectid import ObjectId
 from MidasModel import midas_find_depth
 from flask import Flask
 from flask import request
-import os
-from PIL import Image
 import base64
-import numpy as np
 import requests
 import cloudinary
 import cloudinary.uploader
@@ -47,7 +44,6 @@ def updateTour():
         doc = col.find_one(query_tour)
         
         if doc == None:
-            #col.insert_one(tourinfo)
             print("This Tour Doesn't Exist")
             return
         else:
@@ -77,7 +73,7 @@ def findDepth():
     return {"data": im_array.tolist()}
 
 
-@app.route("/uploadimage", methods=["POST"])
+@app.route("/upload-image", methods=["POST"])
 def uploadImage():
     """
     Upload Image to Cloudinary
