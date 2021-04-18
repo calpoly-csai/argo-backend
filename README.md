@@ -9,7 +9,7 @@ Server-side logic of the Argo Project.
 The [Argo Editor](https://github.com/calpoly-csai/argo-editor-frontend) updates the data in the Argo Backend. Users interact with the tour graphs via the [Argo Tour](https://github.com/calpoly-csai/virtual-tour-concept).
 
 ## Getting Started:
-
+(Note: It's probably a good idea to use a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)! This will make sure your dependencies don't clash with each other).
 1. Clone the repo : `git clone https://github.com/calpoly-csai/argo-backend.git`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Start development server: `python ./src/main.py -l`
