@@ -112,6 +112,34 @@ def uploadImage():
     return d['secure_url']
 
 
+@app.route("/upload-resource", methods=["POST"])
+def uploadResource():
+    """
+    Upload resource to Cloudinary
+    """
+
+    if ("image" in request.files):
+        resource = request.files["image"]
+        resource_type = "image"
+    elif ("video" in request.files):
+        resource = request.files["video"]
+        resource_type = "video"
+    elif ("raw" in request.files):
+        resource = request.files["raw"]
+        resource_type = "raw"
+    else:
+        print("error")
+        return "error"
+    
+    d = cloudinary.uploader.upload(resource, 
+        folder = "", 
+        public_id = resource.filename,
+        overwrite = True, 
+        resource_type = resource_type)
+
+    return d['secure_url']
+
+
 
 if __name__ == "__main__":
     app.run()
