@@ -1,6 +1,6 @@
 import pymongo
 from bson.objectid import ObjectId
-from MidasModel import midas_find_depth
+from src.MidasModel import midas_find_depth
 from flask import Flask
 from flask import request
 import base64
@@ -19,8 +19,8 @@ CORS(app)
 
 parser = argparse.ArgumentParser(description='Argo Backend Server')
 parser.add_argument('-l', "--l", "-local", dest='local', action='store_const', const=True, default=False, help='Indicates if the program should run in development mode')
-args = parser.parse_args()
-use_local_dev = args.local
+args, unknown = parser.parse_known_args()
+use_local_dev = False
 mock_server_url = "mongomock://localhost"
 production_server_url = "mongodb+srv://csai-editor:csaieditor@argocluster.lyc0j.mongodb.net/argo_editor?retryWrites=true&w=majority"
 client = mongomock.MongoClient() if use_local_dev else pymongo.MongoClient(production_server_url)
