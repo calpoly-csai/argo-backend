@@ -80,8 +80,9 @@ def findDepth():
     Get Image URL and return depth map
     """
     # TODO update this to fetch from cloudinary directly.
-    image_url = request.get_data()
-
+    image_url = request.args.get("url")
+    if not image_url:
+        return {"data": [[]]}
     encoded_string = base64.b64encode(requests.get(image_url).content)
     im_array = midas_find_depth(encoded_string.decode("utf-8"))
    
