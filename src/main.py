@@ -13,6 +13,7 @@ import mongomock
 import argparse
 import os
 import json
+import numpy as np
 app = Flask(__name__)
 CORS(app)
 
@@ -82,9 +83,10 @@ def findDepth():
     # TODO update this to fetch from cloudinary directly.
     image_url = request.args.get("url")
     if not image_url:
-        return {"data": [[]]}
+        return "please provide a url", 400
     encoded_string = base64.b64encode(requests.get(image_url).content)
     im_array = midas_find_depth(encoded_string.decode("utf-8"))
+    im_array = np.interp(im_array, (im_array.min(), im_array.max()), (0,1)) # Normalize depths
    
     # Test locally 
     #im = Image.fromarray(im_array)
